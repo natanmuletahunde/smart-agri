@@ -1,65 +1,106 @@
-import Image from "next/image";
+import Link from "next/link";
+import { buttonVariants } from "@/lib/button-variants";
+import { cn } from "@/lib/utils";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
-export default function Home() {
+export default function HomePage() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <div className="mx-auto max-w-6xl px-4 py-12 md:py-20">
+      <div className="mx-auto max-w-2xl text-center">
+        <p className="text-primary mb-2 text-sm font-medium tracking-wide uppercase">
+          Ethiopia
+        </p>
+        <h1 className="text-foreground mb-4 text-3xl font-bold tracking-tight md:text-4xl">
+          Smart Agricultural Marketplace
+        </h1>
+        <p className="text-muted-foreground mb-8 text-lg">
+          Farmers list crops. Buyers order directly. Transporters move goods.
+          Fewer middlemen, clearer prices, faster trade.
+        </p>
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          <Link
+            href="/marketplace"
+            className={cn(buttonVariants({ size: "lg" }))}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            Browse marketplace
+          </Link>
+          <Link
+            href="/register"
+            className={cn(buttonVariants({ variant: "outline", size: "lg" }))}
           >
-            Documentation
-          </a>
+            Create an account
+          </Link>
         </div>
-      </main>
+      </div>
+
+      <div className="mt-16 grid gap-6 md:grid-cols-3">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Farmers</CardTitle>
+            <CardDescription>
+              List teff, maize, coffee, and more with inventory and fair
+              pricing.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Link
+              href="/register"
+              className={cn(
+                buttonVariants({ variant: "secondary" }),
+                "inline-flex w-full justify-center"
+              )}
+            >
+              Sell as farmer
+            </Link>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Buyers</CardTitle>
+            <CardDescription>
+              Discover suppliers, compare listings, and place orders in one
+              place.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Link
+              href="/register"
+              className={cn(
+                buttonVariants({ variant: "secondary" }),
+                "inline-flex w-full justify-center"
+              )}
+            >
+              Buy as buyer
+            </Link>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Transporters</CardTitle>
+            <CardDescription>
+              Delivery workflows are ready to grow as you connect drivers to
+              orders.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Link
+              href="/register"
+              className={cn(
+                buttonVariants({ variant: "secondary" }),
+                "inline-flex w-full justify-center"
+              )}
+            >
+              Join as transporter
+            </Link>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
