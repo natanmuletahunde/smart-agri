@@ -1,6 +1,7 @@
 "use client";
 
 import { createClient } from "@/lib/supabase/client";
+import { isSupabasePlaceholderConfig } from "@/lib/supabase/env";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -15,6 +16,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type { UserRole } from "@/types/database";
+import { formatSupabaseAuthError } from "@/lib/auth/format-auth-error";
+import { normalizeAuthEmail } from "@/lib/auth/normalize-email";
 import Link from "next/link";
 
 const ROLES: { value: UserRole; label: string }[] = [
@@ -35,52 +38,69 @@ export function RegisterForm() {
     setError(null);
     setLoading(true);
     const form = new FormData(e.currentTarget);
-    const email = String(form.get("email") ?? "");
+    const email = normalizeAuthEmail(String(form.get("email") ?? ""));
     const password = String(form.get("password") ?? "");
     const full_name = String(form.get("full_name") ?? "").trim();
     const phone = String(form.get("phone") ?? "").trim() || null;
     const location = String(form.get("location") ?? "").trim() || null;
 
-    const { data, error: signError } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
-
-    if (signError) {
-      setLoading(false);
-      setError(signError.message);
-      return;
-    }
-
-    const user = data.user;
-    if (!user) {
-      setLoading(false);
+    if (isSupabasePlaceholderConfig()) {
       setError(
-        "Check your email to confirm your account, then sign in. Profile will be created on first login if needed."
+        "Supabase is not configured. Put NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in .env.local (Next.js does not load .env.example). Restart the dev server. Use the anon public key from Supabase → Project Settings → API."
       );
+      setLoading(false);
       return;
     }
 
-    const { error: profileError } = await supabase.from("profiles").insert({
-      id: user.id,
-      full_name: full_name || null,
-      role,
-      phone,
-      location,
-    });
+    try {
+      const { data, error: signError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
 
-    setLoading(false);
+      if (signError) {
+        setError(formatSupabaseAuthError(signError));
+        return;
+      }
 
-    if (profileError) {
-      setError(profileError.message);
-      return;
+      const user = data.user;
+      if (!user) {
+        setError(
+          "Check your email to confirm your account, then sign in. Profile will be created on first login if needed."
+        );
+        return;
+      }
+
+      const { error: profileError } = await supabase.from("profiles").insert({
+        id: user.id,
+        full_name: full_name || null,
+        role,
+        phone,
+        location,
+      });
+
+      if (profileError) {
+        setError(profileError.message);
+        return;
+      }
+
+      router.refresh();
+      router.push("/marketplace");
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      if (msg === "Failed to fetch" || msg.includes("NetworkError")) {
+        setError(
+          "Cannot reach Supabase. Confirm NEXT_PUBLIC_SUPABASE_URL in .env.local matches your project, restart the dev server after changing env, and check your network."
+        );
+      } else {
+        setError(msg);
+      }
+    } finally {
+      setLoading(false);
     }
-
-    router.refresh();
-    router.push("/marketplace");
   }
 
   return (

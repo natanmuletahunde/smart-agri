@@ -1,12 +1,15 @@
 "use client";
 
 import { createClient } from "@/lib/supabase/client";
+import { isSupabasePlaceholderConfig } from "@/lib/supabase/env";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { formatSupabaseAuthError } from "@/lib/auth/format-auth-error";
+import { normalizeAuthEmail } from "@/lib/auth/normalize-email";
 import Link from "next/link";
 
 export function LoginForm() {
@@ -20,23 +23,42 @@ export function LoginForm() {
     setError(null);
     setLoading(true);
     const form = new FormData(e.currentTarget);
-    const email = String(form.get("email") ?? "");
+    const email = normalizeAuthEmail(String(form.get("email") ?? ""));
     const password = String(form.get("password") ?? "");
 
-    const { error: signError } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    setLoading(false);
-
-    if (signError) {
-      setError(signError.message);
+    if (isSupabasePlaceholderConfig()) {
+      setError(
+        "Supabase is not configured. Put NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in .env.local (Next.js does not load .env.example). Restart the dev server after saving. Values: Supabase → Project Settings → API."
+      );
+      setLoading(false);
       return;
     }
 
-    router.refresh();
-    router.push("/marketplace");
+    try {
+      const { error: signError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (signError) {
+        setError(formatSupabaseAuthError(signError));
+        return;
+      }
+
+      router.refresh();
+      router.push("/marketplace");
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      if (msg === "Failed to fetch" || msg.includes("NetworkError")) {
+        setError(
+          "Cannot reach Supabase. Check NEXT_PUBLIC_SUPABASE_URL, restart the dev server after env changes, and your network."
+        );
+      } else {
+        setError(msg);
+      }
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
