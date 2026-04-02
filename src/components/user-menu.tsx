@@ -30,8 +30,20 @@ export function UserMenu({
     router.push("/");
   }
 
-  const label =
+  const dropdownLabel =
     profile?.full_name?.trim() || email?.split("@")[0] || "Account";
+
+  // Show first-name initial in the header (e.g. "(N)").
+  const triggerInitial = (() => {
+    const fullName = profile?.full_name?.trim() ?? "";
+    const firstName =
+      fullName.split(/\s+/).filter(Boolean)[0] ??
+      email?.split("@")[0]?.split(/[._-]/)[0] ??
+      "";
+
+    const firstChar = firstName.trim().charAt(0);
+    return firstChar ? firstChar.toUpperCase() : "?";
+  })();
 
   return (
     <DropdownMenu>
@@ -41,12 +53,14 @@ export function UserMenu({
           "max-w-[180px] truncate"
         )}
       >
-        {label}
+        ({triggerInitial})
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">{label}</p>
+            <p className="text-sm font-medium leading-none">
+              {dropdownLabel}
+            </p>
             {email ? (
               <p className="text-muted-foreground text-xs leading-none">{email}</p>
             ) : null}

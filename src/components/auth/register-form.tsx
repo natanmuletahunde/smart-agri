@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/select";
 import type { UserRole } from "@/types/database";
 import { formatSupabaseAuthError } from "@/lib/auth/format-auth-error";
-import { normalizeAuthEmail } from "@/lib/auth/normalize-email";
+import { isValidAuthEmail, normalizeAuthEmail } from "@/lib/auth/normalize-email";
 import Link from "next/link";
 
 const ROLES: { value: UserRole; label: string }[] = [
@@ -48,6 +48,12 @@ export function RegisterForm() {
       setError(
         "Supabase is not configured. Put NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in .env.local (Next.js does not load .env.example). Restart the dev server. Use the anon public key from Supabase → Project Settings → API."
       );
+      setLoading(false);
+      return;
+    }
+
+    if (!isValidAuthEmail(email)) {
+      setError("Please enter a valid email address.");
       setLoading(false);
       return;
     }
@@ -88,7 +94,15 @@ export function RegisterForm() {
       }
 
       router.refresh();
-      router.push("/marketplace");
+      // Supabase may require email confirmation; in that case `session` is null
+      // and the user won't be authenticated yet (so we shouldn't redirect).
+      if (data.session) {
+        router.push("/marketplace");
+      } else {
+        setError(
+          "Check your email to confirm your account, then log in. Your profile was created during registration."
+        );
+      }
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
       if (msg === "Failed to fetch" || msg.includes("NetworkError")) {

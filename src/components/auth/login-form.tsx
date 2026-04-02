@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { formatSupabaseAuthError } from "@/lib/auth/format-auth-error";
-import { normalizeAuthEmail } from "@/lib/auth/normalize-email";
+import { isValidAuthEmail, normalizeAuthEmail } from "@/lib/auth/normalize-email";
 import Link from "next/link";
 
 export function LoginForm() {
@@ -30,6 +30,12 @@ export function LoginForm() {
       setError(
         "Supabase is not configured. Put NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in .env.local (Next.js does not load .env.example). Restart the dev server after saving. Values: Supabase → Project Settings → API."
       );
+      setLoading(false);
+      return;
+    }
+
+    if (!isValidAuthEmail(email)) {
+      setError("Please enter a valid email address.");
       setLoading(false);
       return;
     }
