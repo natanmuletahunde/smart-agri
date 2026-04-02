@@ -101,6 +101,36 @@ export default function HomePage() {
           </CardContent>
         </Card>
       </div>
+
+      <footer className="border-t mt-16 py-8">
+        <div className="mx-auto max-w-6xl px-4">
+          <div className="grid gap-6 md:grid-cols-3">
+            <div>
+              <h4 className="font-semibold mb-2">Smart Agri</h4>
+              <p className="text-muted-foreground text-sm">
+                Digital Agricultural Marketplace for Ethiopia. Connecting farmers, buyers, and transporters.
+              </p>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-2">Quick Links</h4>
+              <ul className="space-y-1 text-sm text-muted-foreground">
+                <li><Link href="/marketplace" className="hover:text-foreground transition-colors">Marketplace</Link></li>
+                <li><Link href="/about" className="hover:text-foreground transition-colors">About</Link></li>
+                <li><Link href="/register" className="hover:text-foreground transition-colors">Register</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-2">Created by</h4>
+              <p className="text-muted-foreground text-sm">
+                Smart Agri Team — Empowering Ethiopian agriculture through technology.
+              </p>
+            </div>
+          </div>
+          <div className="mt-6 pt-6 border-t text-center text-muted-foreground text-sm">
+            © {new Date().getFullYear()} Smart Agri. All rights reserved.
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

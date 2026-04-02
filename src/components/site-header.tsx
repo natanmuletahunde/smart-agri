@@ -3,6 +3,7 @@ import { getSessionProfile } from "@/lib/data/profile";
 import { UserMenu } from "@/components/user-menu";
 import { buttonVariants } from "@/lib/button-variants";
 import { cn } from "@/lib/utils";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export async function SiteHeader() {
   const { user, profile } = await getSessionProfile();
@@ -22,6 +23,12 @@ export async function SiteHeader() {
             className="text-muted-foreground hover:text-foreground transition-colors"
           >
             Marketplace
+          </Link>
+          <Link
+            href="/about"
+            className="text-muted-foreground hover:text-foreground transition-colors"
+          >
+            About
           </Link>
           {profile?.role === "farmer" ? (
             <>
@@ -47,10 +54,14 @@ export async function SiteHeader() {
               My orders
             </Link>
           ) : null}
-          {user ? (
-            <UserMenu email={user.email} profile={profile} />
+{user ? (
+            <>
+              <ThemeToggle />
+              <UserMenu email={user.email} profile={profile} />
+            </>
           ) : (
             <div className="flex items-center gap-2">
+              <ThemeToggle />
               <Link
                 href="/login"
                 className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}
