@@ -133,12 +133,14 @@ function CategorySection({ category, items }: CategorySectionProps) {
 export default function MarketplacePage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold tracking-tight">Marketplace</h1>
-        <p className="text-muted-foreground mt-1 text-sm">
+      <section className="mb-12 text-center py-12 px-4 rounded-xl bg-gradient-to-b from-muted/50 to-background">
+        <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-foreground">
+          Marketplace
+        </h1>
+        <p className="text-muted-foreground mt-4 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
           Browse listings from farmers, sellers, and transporters across Ethiopia.
         </p>
-      </div>
+      </section>
 
       <div className="space-y-10">
         {marketplaceData.map((section) => (

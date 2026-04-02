@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -56,21 +57,23 @@ export function UserMenu({
         ({triggerInitial})
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuLabel className="font-normal">
-          <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">
-              {dropdownLabel}
-            </p>
-            {email ? (
-              <p className="text-muted-foreground text-xs leading-none">{email}</p>
-            ) : null}
-            {profile?.role ? (
-              <p className="text-muted-foreground text-xs capitalize">
-                {profile.role}
+        <DropdownMenuGroup>
+          <DropdownMenuLabel className="font-normal">
+            <div className="flex flex-col space-y-1">
+              <p className="text-sm font-medium leading-none">
+                {dropdownLabel}
               </p>
-            ) : null}
-          </div>
-        </DropdownMenuLabel>
+              {email ? (
+                <p className="text-muted-foreground text-xs leading-none">{email}</p>
+              ) : null}
+              {profile?.role ? (
+                <p className="text-muted-foreground text-xs capitalize">
+                  {profile.role}
+                </p>
+              ) : null}
+            </div>
+          </DropdownMenuLabel>
+        </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => signOut()}>Log out</DropdownMenuItem>
       </DropdownMenuContent>
