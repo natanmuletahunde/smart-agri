@@ -75,20 +75,20 @@ export function RegisterForm() {
       const user = data.user;
       if (!user) {
         setError(
-          "Check your email to confirm your account, then sign in. Profile will be created on first login if needed."
+          "Check your email to confirm your account, then sign in."
         );
         return;
       }
 
-      const { error: profileError } = await supabase.from("profiles").insert({
+      const { error: profileError } = await supabase.from("profiles").upsert({
         id: user.id,
         full_name: full_name || null,
         role,
         phone,
         location,
-      });
+      }, { onConflict: 'id' });
 
-      if (profileError) {
+      if (profileError && !profileError.message.includes('duplicate')) {
         setError(profileError.message);
         return;
       }
